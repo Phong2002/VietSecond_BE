@@ -9,6 +9,8 @@ public class ResponseJWT {
     private String jwt;
     private String username;
     private String fullname;
+    private String email;
+    private Long accountBalance;
     private Role role;
 
     public ResponseJWT(String jwt, User user) {
@@ -16,5 +18,7 @@ public class ResponseJWT {
         this.username = user.getUsername();
         this.fullname = user.getFullName();
         this.role = user.getRole();
+        this.email = user.getEmail();
+        this.accountBalance = user.getAccountBalance();
     }
 }
