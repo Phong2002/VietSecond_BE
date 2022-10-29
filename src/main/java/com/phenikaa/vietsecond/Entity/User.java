@@ -1,4 +1,5 @@
-package com.blameo.carmanagement.Entity;
+package com.phenikaa.vietsecond.Entity;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.phenikaa.vietsecond.Entity.Role;
 import lombok.Data;
