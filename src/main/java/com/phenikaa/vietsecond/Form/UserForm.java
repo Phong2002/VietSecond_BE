@@ -1,11 +1,11 @@
 package com.phenikaa.vietsecond.Form;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.phenikaa.vietsecond.Entity.Role;
 import com.phenikaa.vietsecond.Entity.User;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
@@ -28,7 +28,7 @@ public class UserForm implements Serializable {
     @NotBlank(message = "phone number must not be empty !")
     private final String phoneNumber;
     @NotBlank(message = "email must not be empty !")
-    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",message = "email is not valid")
+    @Email(message = "email is not valid")
     private final String email;
     @NotBlank(message = "username must not be empty !")
     private final String username;
