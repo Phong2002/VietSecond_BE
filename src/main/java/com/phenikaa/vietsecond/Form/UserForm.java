@@ -2,6 +2,7 @@ package com.phenikaa.vietsecond.Form;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.phenikaa.vietsecond.Entity.Role;
+import com.phenikaa.vietsecond.Entity.User;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -33,4 +34,19 @@ public class UserForm implements Serializable {
     @JsonIgnore
     private final String password;
     private final Role role;
+
+    public User ToEntity(){
+        User user = new User();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setGender(gender);
+        user.setAddress(address);
+        user.setPhoneNumber(phoneNumber);
+        user.setEmail(email);
+        user.setAccountBalance(0L);
+        user.setDateOfBirth(dateOfBirth);
+        user.setUsername(username);
+        user.setRole(Role.USER);
+        return user;
+    }
 }
