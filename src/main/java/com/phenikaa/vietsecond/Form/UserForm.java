@@ -28,7 +28,7 @@ public class UserForm implements Serializable {
     @NotBlank(message = "phone number must not be empty !")
     private final String phoneNumber;
     @NotBlank(message = "email must not be empty !")
-    @Email(message = "email is not valid")
+    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",message = "email is not valid")
     private final String email;
     @NotBlank(message = "username must not be empty !")
     private final String username;
