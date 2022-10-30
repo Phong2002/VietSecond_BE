@@ -9,5 +9,7 @@ public interface IUserService extends UserDetailsService {
     Page<User> GetAllUser();
     Boolean ExistsByUsername(String username);
     User FindByUserId(Integer userId);
+    Boolean ExistsByEmail(String email);
+    Boolean ExistsByPhoneNumber(String phoneNumber);
     void Register(UserForm userForm);
 }
