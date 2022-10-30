@@ -1,6 +1,7 @@
 package com.phenikaa.vietsecond.Presentation_Layer;
 import com.phenikaa.vietsecond.Business_Logic_Layer.UserService;
 import com.phenikaa.vietsecond.Form.FormLogin;
+import com.phenikaa.vietsecond.Form.UserForm;
 import com.phenikaa.vietsecond.Security.JWT.JwtTokenProvider;
 import com.phenikaa.vietsecond.Security.JWT.ResponseJWT;
 import com.phenikaa.vietsecond.Security.Service.UserDetailsImpl;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 
 @RestController
@@ -47,9 +50,9 @@ public class AuthController {
         return new ResponseEntity<>(responseJWT, HttpStatus.OK);
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<?> Register(@RequestBody @Valid FormUser formUser) {
-//        userService.Register(formUser);
-//       return new ResponseEntity<String>("Tạo tài khoản thành công !",HttpStatus.CREATED);
-//    }
+    @PostMapping("/register")
+    public ResponseEntity<?> Register(@RequestBody @Valid UserForm formUser) {
+        userService.Register(formUser);
+       return new ResponseEntity<String>("Tạo tài khoản thành công !",HttpStatus.CREATED);
+    }
 }
