@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -27,11 +28,13 @@ public class UserForm implements Serializable {
     @NotBlank(message = "phone number must not be empty !")
     private final String phoneNumber;
     @NotBlank(message = "email must not be empty !")
+    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",message = "email is not valid")
     private final String email;
     @NotBlank(message = "username must not be empty !")
     private final String username;
     @NotBlank(message = "password must not be empty !")
-    @JsonIgnore
+    @Pattern(regexp = "^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[.,/;#?!@$%^&*-]).{8,}$" ,
+            message = "password has minimum eight characters, at least one letter, one number and one special character")
     private final String password;
     private final Role role;
 
@@ -46,6 +49,7 @@ public class UserForm implements Serializable {
         user.setAccountBalance(0L);
         user.setDateOfBirth(dateOfBirth);
         user.setUsername(username);
+        user.setPassword(password);
         user.setRole(Role.USER);
         return user;
     }
