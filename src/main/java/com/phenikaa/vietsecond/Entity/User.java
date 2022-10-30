@@ -29,7 +29,6 @@ public class User implements Serializable {
     private String fullName;
 
     @Column(name = "gender")
-    @Enumerated(EnumType.STRING)
     private String gender;
 
     @Column(name = "address")
