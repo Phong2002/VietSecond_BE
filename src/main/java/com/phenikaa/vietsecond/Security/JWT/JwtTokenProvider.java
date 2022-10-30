@@ -12,10 +12,7 @@ import java.util.Date;
 @Slf4j
 public class JwtTokenProvider {
 
-
-
-    private final String jwtSecret = "blameo";
-
+    private final String jwtSecret = "vietsecond";
 
     private final int jwtExpirationMs = 86400000;
 
