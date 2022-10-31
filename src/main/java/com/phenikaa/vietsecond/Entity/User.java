@@ -57,4 +57,7 @@ public class User implements Serializable {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name =  "isActive")
+    private boolean isActive;
 }
