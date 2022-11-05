@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456a@
+      - MYSQL_DATABASE=VietSecond
+    restart: always
+    ports:
+      - "3310:3306"
