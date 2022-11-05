@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 
 
 @RestController
@@ -51,7 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> Register(@RequestBody @Valid UserForm formUser) {
+    public ResponseEntity<?> Register(@RequestBody @Valid UserForm formUser) throws MessagingException, UnsupportedEncodingException {
         userService.Register(formUser);
        return new ResponseEntity<String>("Tạo tài khoản thành công !",HttpStatus.CREATED);
     }
