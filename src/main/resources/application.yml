@@ -1,0 +1,5 @@
+amazonProperties:
+  endpointUrl: https://s3.ap-northeast-1.amazonaws.com
+  accessKey: AKIA37VUVVKGUCCKWG5V
+  secretKey: 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
+  bucketName: vietsecond

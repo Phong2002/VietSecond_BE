@@ -19,5 +19,6 @@ public interface IUserService extends UserDetailsService {
     void updateNewPassword(String token, String newPassword);
     void resetPassword(String email) throws MessagingException, UnsupportedEncodingException;
     void accountVerification(String token);
+    void uploadAvatar(String url,String username);
 
 }

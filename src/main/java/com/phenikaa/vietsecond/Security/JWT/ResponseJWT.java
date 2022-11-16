@@ -10,6 +10,7 @@ public class ResponseJWT {
     private String username;
     private String fullname;
     private String email;
+    private String urlAvatar;
     private Long accountBalance;
     private Role role;
 
@@ -19,6 +20,7 @@ public class ResponseJWT {
         this.fullname = user.getFullName();
         this.role = user.getRole();
         this.email = user.getEmail();
+        this.urlAvatar=user.getAvatar();
         this.accountBalance = user.getAccountBalance();
     }
 }
