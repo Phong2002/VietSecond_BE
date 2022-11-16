@@ -1,7 +1,8 @@
 package com.phenikaa.vietsecond.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.phenikaa.vietsecond.Entity.Role;
+import com.phenikaa.vietsecond.Entity.VietnameseProvinces.District;
+import com.phenikaa.vietsecond.Entity.VietnameseProvinces.Ward;
 import lombok.Data;
 import org.hibernate.annotations.Formula;
 
@@ -31,8 +32,9 @@ public class User implements Serializable {
     @Column(name = "gender")
     private String gender;
 
-    @Column(name = "address")
-    private String address;
+    @ManyToOne
+    @JoinColumn(name = "address")
+    private Ward address;
 
     @Temporal(TemporalType.DATE)
     @Column(name="dateOfBirth")
@@ -53,6 +55,9 @@ public class User implements Serializable {
     @JsonIgnore
     @Column(name = "password")
     private String password;
+
+    @Column(name= "avatar")
+    private String avatar;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)

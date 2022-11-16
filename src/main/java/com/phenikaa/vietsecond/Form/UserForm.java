@@ -42,7 +42,7 @@ public class UserForm implements Serializable {
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setGender(gender);
-        user.setAddress(address);
+
         user.setPhoneNumber(phoneNumber);
         user.setEmail(email);
         user.setAccountBalance(0L);
