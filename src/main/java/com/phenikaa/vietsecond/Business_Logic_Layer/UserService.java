@@ -3,9 +3,11 @@ package com.phenikaa.vietsecond.Business_Logic_Layer;
 import com.phenikaa.vietsecond.Data_Access_Layer.AccountVerificationRepository;
 import com.phenikaa.vietsecond.Data_Access_Layer.ResetPasswordRepository;
 import com.phenikaa.vietsecond.Data_Access_Layer.UserRepository;
+import com.phenikaa.vietsecond.Data_Access_Layer.VietnameseProvincesRepository.WardRepository;
 import com.phenikaa.vietsecond.Entity.AccountVerification;
 import com.phenikaa.vietsecond.Entity.ResetPassword;
 import com.phenikaa.vietsecond.Entity.User;
+import com.phenikaa.vietsecond.Entity.VietnameseProvinces.Ward;
 import com.phenikaa.vietsecond.Form.UserForm;
 import com.phenikaa.vietsecond.Security.Authentication;
 import com.phenikaa.vietsecond.Security.Service.UserDetailsImpl;
@@ -39,6 +41,9 @@ public class UserService implements IUserService{
 
     @Autowired
     ResetPasswordRepository resetPasswordRepository;
+
+    @Autowired
+    WardRepository wardRepository;
 
     @Override
     public Page<User> GetAllUser() {
@@ -81,7 +86,10 @@ public class UserService implements IUserService{
         User user = userForm.ToEntity();
         String passwordEn = authentication.passwordEncoder().encode(user.getPassword());
         user.setPassword(passwordEn);
+        Optional<Ward> ward = wardRepository.findById(userForm.getAddress());
+        user.setAddress(ward.get());
         userRepository.save(user);
+
 
         final String newToken = UUID.randomUUID().toString();
         Optional<User> userRegister = userRepository.findByUsername(user.getUsername());
@@ -105,15 +113,22 @@ public class UserService implements IUserService{
     }
 
     @Override
+    public void uploadAvatar(String url,String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        user.get().setAvatar(url);
+        userRepository.save(user.get());
+    }
+
+    @Override
     public void resetPassword(String email) throws MessagingException, UnsupportedEncodingException {
         if(!userRepository.existsByEmail(email)){
             throw new CustomException(400,"Email is not exists");
         }
         User user = userRepository.findByEmail(email);
-
         if(resetPasswordRepository.existsByUserId(user.getUserId())){
             throw new CustomException(400,"This user requested to reset the password");
         }
+
         String token = UUID.randomUUID().toString();
         ResetPassword resetPassword = new ResetPassword();
         resetPassword.setUserId(user.getUserId());
@@ -139,7 +154,6 @@ public class UserService implements IUserService{
     public User getByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
