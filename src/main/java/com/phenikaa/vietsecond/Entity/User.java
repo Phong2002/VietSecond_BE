@@ -12,21 +12,21 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name="User" )
+@Table(name="user" )
 
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userId", nullable = false,unique=true)
+    @Column(name = "user_id", nullable = false,unique=true)
     private Integer userId;
 
-    @Column(name = "firstName")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "lastName")
+    @Column(name = "last_name")
     private String lastName;
 
-    @Formula(" concat(firstName, ' ', lastName) ")
+    @Formula(" concat(first_name, ' ', last_name) ")
     private String fullName;
 
     @Column(name = "gender")
@@ -37,13 +37,13 @@ public class User implements Serializable {
     private Ward address;
 
     @Temporal(TemporalType.DATE)
-    @Column(name="dateOfBirth")
+    @Column(name="date_of_birth")
     private Date dateOfBirth;
 
-    @Column(name = "phoneNumber")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "accountBalance")
+    @Column(name = "account_balance")
     private Long accountBalance;
 
     @Column(name = "email")
