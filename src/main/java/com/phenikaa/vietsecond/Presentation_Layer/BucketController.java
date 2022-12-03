@@ -20,8 +20,8 @@ public class BucketController {
     }
 
     @PostMapping("/uploadFile")
-    public ResponseEntity<?> uploadFile(@RequestPart(value = "file") MultipartFile file) {
-        return new ResponseEntity<String>(  this.amazonClient.uploadFile(file), HttpStatus.OK);
+    public ResponseEntity<?> uploadFile(@RequestPart(value = "file") MultipartFile[] file) {
+        return new ResponseEntity<>(  this.amazonClient.uploadMultifile(file), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")

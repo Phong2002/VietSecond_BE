@@ -16,7 +16,9 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class AmazonClient {
@@ -74,7 +76,27 @@ public class AmazonClient {
         s3client.deleteObject(bucketName,fileName);
     }
     public void deleteMultiFile(String []urlFiles){
+        String[] newListUrl = new String[urlFiles.length];
+        for(int i=0;i<urlFiles.length;i++){
+            int firstIndex = urlFiles[i].lastIndexOf("/")+1;
+            int lastIndex = urlFiles[i].length();
+            String fileName = urlFiles[i].substring(firstIndex,lastIndex);
+            newListUrl[i]=fileName;
+        }
+
         DeleteObjectsRequest deleteObjectRequest = new DeleteObjectsRequest(bucketName).withKeys(urlFiles);
         s3client.deleteObjects(deleteObjectRequest);
+    }
+
+    public List<String> uploadMultifile(MultipartFile[] multipartFiles){
+        List<String> listUrl = new ArrayList<>();
+        try {
+            for(MultipartFile file:multipartFiles){
+                listUrl.add(uploadFile(file));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listUrl;
     }
 }
