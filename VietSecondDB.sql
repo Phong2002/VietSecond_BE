@@ -5,7 +5,7 @@ IF
 CREATE DATABASE
 IF
 	NOT EXISTS VietSecond;
-
+	
 USE VietSecond;
 
 
@@ -93,6 +93,91 @@ CREATE TABLE wards (
 ALTER TABLE wards ADD CONSTRAINT wards_administrative_unit_id_fkey FOREIGN KEY (administrative_unit_id) REFERENCES administrative_units(id);
 ALTER TABLE wards ADD CONSTRAINT wards_district_code_fkey FOREIGN KEY (district_code) REFERENCES districts(code);
 
+CREATE TABLE user (
+                      user_id INT PRIMARY KEY AUTO_INCREMENT,
+                      first_name VARCHAR ( 50 ) NOT NULL,
+                      last_name VARCHAR ( 50 ) NOT NULL,
+                      gender ENUM ( 'MALE', 'FEMALE', 'UNKNOWN' ),
+                      address varchar(20) NOT NULL,
+                      date_of_birth DATE NOT NULL,
+                      phone_number VARCHAR ( 15 ) NOT NULL,
+                      account_balance LONGBLOB,
+                      email VARCHAR ( 100 ) NOT NULL,
+                      username VARCHAR ( 50 ) NOT NULL,
+                      password VARCHAR ( 255 ) NOT NULL,
+                      avatar TEXT,
+                      role ENUM ( 'USER', 'ADMIN' ),
+                      isActive bit,
+											 CONSTRAINT FK_User_Address FOREIGN KEY (address) REFERENCES wards (code)
+       
+);
+
+CREATE TABLE account_verification (
+                                     id INT PRIMARY KEY AUTO_INCREMENT,
+                                     user_id INT UNIQUE NOT NULL,
+                                     token VARCHAR ( 255 ) NOT NULL
+);
+
+CREATE TABLE reset_password (
+                               id INT PRIMARY KEY AUTO_INCREMENT,
+                               user_id INT UNIQUE NOT NULL,
+                               token VARCHAR ( 255 ) NOT NULL
+);
+
+CREATE TABLE category (
+category_id INT PRIMARY KEY AUTO_INCREMENT,
+category_name VARCHAR ( 255 ) NOT NULL,
+parent_id INT,
+path TEXT NOT NULL,
+`level` TINYINT NOT NULL,
+CONSTRAINT fk_parent_category FOREIGN KEY (parent_id) REFERENCES Category(category_id) 
+ON DELETE CASCADE
+ON UPDATE CASCADE 
+);
+
+
+CREATE TABLE product(
+product_id INT PRIMARY KEY AUTO_INCREMENT,
+category_id INT,
+usage_status ENUM ( 'NEW', 'USED' ),
+product_name TEXT ,
+seller INT NOT NULL,
+state ENUM ('NONE','SALE','EXCHANGE','FREE'),
+CONSTRAINT fk_product_category FOREIGN KEY (category_id) REFERENCES category(category_id) 
+ON DELETE CASCADE
+ON UPDATE CASCADE,
+CONSTRAINT fk_product_seller FOREIGN KEY (seller) REFERENCES `user`(user_id) 
+ON DELETE CASCADE
+ON UPDATE CASCADE
+);
+
+CREATE TABLE post_product(
+post_product_id INT PRIMARY KEY AUTO_INCREMENT,
+product_id INT,
+title TEXT,
+`describe` TEXT,
+price BIGINT,
+address VARCHAR(20) NOT NULL,
+address_details TEXT NOT NULL,
+posting_time DATETIME NOT NULL,
+CONSTRAINT fk_post_product FOREIGN KEY (product_id) REFERENCES product(product_id) 
+ON DELETE CASCADE
+ON UPDATE CASCADE,
+
+CONSTRAINT fk_product_address FOREIGN KEY (address) REFERENCES wards(code) 
+ON DELETE CASCADE
+ON UPDATE CASCADE
+
+);
+
+CREATE TABLE image_product(
+image_product_id INT PRIMARY KEY AUTO_INCREMENT,
+url TEXT NOT NULL,
+product_id INT,
+CONSTRAINT fk_image_product FOREIGN KEY (product_id) REFERENCES product(product_id) 
+ON DELETE CASCADE
+ON UPDATE CASCADE
+);
 
 
 -- DATA for administrative_regions
@@ -12634,46 +12719,105 @@ INSERT INTO wards (code,name,name_en,full_name,full_name_en,code_name,district_c
 	 ('32248','Đất Mũi','Dat Mui','Xã Đất Mũi','Dat Mui Commune','dat_mui','973',10);
 
 
-CREATE TABLE User (
-                      userId INT PRIMARY KEY AUTO_INCREMENT,
-                      firstName VARCHAR ( 50 ) NOT NULL,
-                      lastName VARCHAR ( 50 ) NOT NULL,
-                      gender ENUM ( 'MALE', 'FEMALE', 'UNKNOWN' ),
-                      address varchar(20) NOT NULL,
-                      dateOfBirth DATE NOT NULL,
-                      phoneNumber VARCHAR ( 15 ) NOT NULL,
-                      accountBalance LONGBLOB,
-                      email VARCHAR ( 100 ) NOT NULL,
-                      userName VARCHAR ( 50 ) NOT NULL,
-                      password VARCHAR ( 255 ) NOT NULL,
-                      avatar TEXT,
-                      role ENUM ( 'USER', 'ADMIN' ),
-                      isActive bit,
-											 CONSTRAINT FK_User_Address FOREIGN KEY (address) REFERENCES wards (code)
-       
-);
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `gender`, `address`, `date_of_birth`, `phone_number`, `account_balance`, `email`, `username`, `password`, `avatar`, `role`, `isActive`) VALUES (1, 'Ngô Bá', 'Khá', 'MALE', '32248', '1993-11-27', '0369425986', 0x30, 'khabanhdzai@gmail.com', 'khabanhpaylak', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://cand.com.vn/Files/Image/thuthuy/2019/10/31/ea654603-db33-4b11-8b28-bb7e101769d3.jpg', 'USER', b'1');
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `gender`, `address`, `date_of_birth`, `phone_number`, `account_balance`, `email`, `username`, `password`, `avatar`, `role`, `isActive`) VALUES (2, 'Nguyễn Xuân', 'Đường ', 'MALE','32248', '1971-06-15', '0658351258', 0x30, 'duongnhue71@gmail.com', 'duongnhuetb', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://vcdn1-vnexpress.vnecdn.net/2020/04/22/nhue-4267-1587552327.jpg?w=0&h=0&q=100&dpr=2&fit=crop&s=xpvfGXG3x-RA2BVERrzSMQ', 'USER', b'1');
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `gender`, `address`, `date_of_birth`, `phone_number`, `account_balance`, `email`, `username`, `password`, `avatar`, `role`, `isActive`) VALUES (3, 'Lê Văn', 'Phú', 'MALE', '32248', '1980-08-13', '0258635415', 0x30, 'chicaphule@gmail.com', 'chicaphu', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'http://giadinh.mediacdn.vn/2020/8/6/pl-1596717424463705867369.jpg', 'USER', b'1');
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `gender`, `address`, `date_of_birth`, `phone_number`, `account_balance`, `email`, `username`, `password`, `avatar`, `role`, `isActive`) VALUES (4, 'Nguyễn Văn', 'Dũng', 'MALE','32248', '1992-06-15', '0369425586', 0x30, 'dungkhongtrochd@gmail.com', 'dungtrochadong', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://nld.mediacdn.vn/thumb_w/600/291774122806476800/2021/5/22/base64-16216399515381693726686.png', 'USER', b'1');
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `gender`, `address`, `date_of_birth`, `phone_number`, `account_balance`, `email`, `username`, `password`, `avatar`, `role`, `isActive`) VALUES (5, 'Nguyễn Thành', 'Long', 'MALE', '32248', '1988-08-10', '0369845686', 0x30, 'tienbibip@gmail.com', 'tienkhongbip', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://35express.org/wp-content/uploads/2021/01/Kenh-youtube-cua-tien-bip-35express.jpg', 'USER', b'1');
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `gender`, `address`, `date_of_birth`, `phone_number`, `account_balance`, `email`, `username`, `password`, `avatar`, `role`, `isActive`) VALUES (6, 'Nguyễn Văn', 'Hợi', 'MALE', '32248', '1992-05-30', '0369425986', 0x30, 'khanhsky@gmail.com', 'khanhbautroi', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://wikiceleb.net/wp-content/uploads/2022/08/khanh-sky-02.jpg', 'USER', b'1');
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `gender`, `address`, `date_of_birth`, `phone_number`, `account_balance`, `email`, `username`, `password`, `avatar`, `role`, `isActive`) VALUES (7, 'Nguyễn Thùy', 'Chi', 'FEMALE', '32248', '1993-06-14', '0699856478', 0x30, 'chipunek@gmail.com', 'chipuooo', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Chi_Pu_as_H%E1%BA%A1_Linh_in_She_Was_Pretty_%28M%E1%BB%91i_t%C3%ACnh_%C4%91%E1%BA%A7u_c%E1%BB%A7a_t%C3%B4i%29.jpg', 'USER', b'1');
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `gender`, `address`, `date_of_birth`, `phone_number`, `account_balance`, `email`, `username`, `password`, `avatar`, `role`, `isActive`) VALUES (8, 'Mai Phương', 'Thúy', 'FEMALE', '32248', '1995-08-30', '0586264586', 0x30, 'maithuy@gmail.com', 'maithuy12', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1Uli8Zljk9z3TmHP5q8w1k_q7ArIlDupqaw&usqp=CAU', 'USER', b'1');
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `gender`, `address`, `date_of_birth`, `phone_number`, `account_balance`, `email`, `username`, `password`, `avatar`, `role`, `isActive`) VALUES (9, 'Phạm Văn', 'Thoại', 'UNKNOWN', '32248', '1996-06-16', '0685136586', 0x30, 'thoainorin123@gmail.com', 'meophonorin', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://static2.yan.vn/YanNews/2167221/202201/pham-thoai-lien-tuc-gap-rac-roi-khi-ban-hang-bi-mat-tien-oan-c0ce5759.jpg', 'USER', b'1');
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `gender`, `address`, `date_of_birth`, `phone_number`, `account_balance`, `email`, `username`, `password`, `avatar`, `role`, `isActive`) VALUES (10, 'Trần Đức', 'Bo', 'UNKNOWN', '32248', '1999-10-13', '0968596358', 0x30, 'conmeongungok@gmail.com', 'conmeongungok', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://mayruaxemay.vn/wp-content/uploads/2021/03/tran-duc-bo-la-ai-1.jpg', 'USER', b'1');
+INSERT INTO `user` (`user_id`, `first_name`, `last_name`, `gender`, `address`, `date_of_birth`, `phone_number`, `account_balance`, `email`, `username`, `password`, `avatar`, `role`, `isActive`) VALUES (11, 'Bùi Xuân', 'Huấn', 'MALE', '32248', '1984-09-03', '0996684633', 0x30, 'huanhoahong@gmail.com', 'huan9ngon', '$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://s.memehay.com/files/posts/20210515/toan-bo-loi-ran-day-cua-huan-hoa-hong-huan-rose.jpg', 'USER', b'1');
 
-CREATE TABLE AccountVerification (
-                                     id INT PRIMARY KEY AUTO_INCREMENT,
-                                     userId INT UNIQUE NOT NULL,
-                                     token VARCHAR ( 255 ) NOT NULL
-);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (1, 'Xe cộ', NULL, '1', 1);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (2, 'Đồ điện tử ', NULL, '2', 1);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (3, 'Thú cưng', NULL, '3', 1);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (4, 'Tủ lạnh, máy lạnh, máy giặt', NULL, '4', 1);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (5, 'Đồ gia dụng, nội thất, cây cảnh', NULL, '5', 1);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (6, 'Mẹ và bé ', NULL, '6', 1);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (7, 'Thời trang, Đồ dùng cá nhân', NULL, '7', 1);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (8, 'Giải trí, thể thao', NULL, '8', 1);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (9, 'Đồ dùng văn phòng', NULL, '9', 1);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (10, 'Ô tô', 1, '1/10', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (11, 'Xe máy', 1, '1/11', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (12, 'Xe điện', 1, '1/12', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (13, 'Xe đạp', 1, '1/13', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (14, 'Phương tiện khác', 1, '1/14', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (15, 'Phụ tùng xe', 1, '1/15', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (16, 'Điện thoại', 2, '2/16', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (17, 'Máy tính bảng', 2, '2/17', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (18, 'Laptop', 2, '2/18', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (19, 'Máy tính để bàn', 2, '2/19', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (20, 'Máy ảnh,máy quay', 2, '2/20', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (21, 'Tivi, Âm thanh', 2, '2/21', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (22, 'Thiết bị đeo thông minh', 2, '2/22', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (23, 'Phụ kiện điện tử', 2, '2/23', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (24, 'Linh kiện điện tử', 2, '2/24', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (25, 'Gà', 3, '3/25', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (26, 'Chó', 3, '3/26', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (27, 'Chim', 3, '3/27', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (28, 'Mèo', 3, '3/28', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (29, 'Thú cưng khác', 3, '3/29', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (30, 'Phụ kiện , thức ăn thú cưng', 3, '3/29', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (31, 'Tủ lạnh', 4, '4/30', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (32, 'Máy lạnh, điều hòa', 4, '4/31', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (33, 'Máy giặt', 4, '4/32', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (34, 'Bàn ghế', 5, '5/34', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (35, 'Tủ, kệ gia đình', 5, '5/35', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (36, 'Giường, chăn ga gối đệm', 5, '5/36', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (37, 'Bếp, lò, đồ điện nhà bếp', 5, '5/37', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (38, 'Dụng cụ nhà bếp', 5, '5/38', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (39, 'Quạt', 5, '5/39', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (40, 'Đèn', 5, '5/40', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (41, 'Quạt', 5, '5/41', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (42, 'Cây cảnh, đồ trang trí', 5, '5/42', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (43, 'Thiết bị vệ sinh, nhà tắm', 5, '5/43', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (44, 'Nội thất, đồ gia dụng khác', 5, '5/44', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (45, 'Quần áo', 7, '7/45', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (46, 'Đồng hồ', 7, '7/46', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (47, 'Giày dép', 7, '7/47', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (48, 'Túi xách', 7, '7/48', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (49, 'Nước hoa', 7, '7/49', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (50, 'Phụ  kiện thời trang khác', 7, '7/50', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (51, 'Nhạc cụ', 8, '8/51', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (52, 'Sách', 8, '8/52', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (53, 'Đồ thể thao', 8, '8/53', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (54, 'Đồ sưu tầm, đồ cổ', 8, '8/54', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (55, 'Thiết bị chơi game', 8, '8/55', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (56, 'Sở thích khác', 8, '8/56', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (57, 'Đồ dùng văn phòng', 9, '9/57', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (58, 'Đồ chuyên dụng, giống nuôi trồng', 9, '9/58', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (59, 'Sedan', 10, '1/10/59', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (60, 'SUV/Cross over', 10, '1/10/60', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (61, 'Hatchback', 10, '1/10/61', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (62, 'Pick-up (bán tải)', 10, '1/10/62', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (63, 'Minivan (MPV)', 10, '1/10/63', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (64, 'Van', 10, '1/10/64', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (65, 'Coupe (2 cửa)', 10, '1/10/65', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (66, 'Mui trần', 10, '1/10/66', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (67, 'Kiểu dáng khác', 10, '1/10/67', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (68, 'Tay ga', 11, '1/11/68', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (69, 'Xe số', 11, '1/11/69', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (70, 'Tay côn / Moto', 11, '1/11/70', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (71, 'Xe máy điện', 12, '1/12/71', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (72, 'Xe đạp điện', 12, '1/12/72', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (73, 'Xe điện khác', 12, '1/12/73', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (74, 'Xe đạp thể thao', 13, '1/13/74', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (75, 'Xe đạp phổ thông', 13, '1/13/75', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (76, 'Xe đạp trẻ em', 13, '1/13/76', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (77, 'Xe đạp khác', 13, '1/13/77', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (78, 'Xe chuyên dụng ', 14, '1/14/78', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (79, 'Xe khác', 14, '1/14/79', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (80, 'Xe khách, xe buýt', 14, '1/14/80', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (81, 'Phụ tùng xe máy', 15, '1/15/81', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (82, 'Phụ tùng ô tô', 15, '1/15/82', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (83, 'Phụ tùng xe đạp', 15, '1/15/83', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (84, 'Phụ tùng xe điện', 15, '1/15/54', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (85, 'Phụ tùng khác', 15, '1/15/55', 3);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (86, 'Đồ cho mẹ', 6, '6/86', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (87, 'Đồ cho bé', 6, '6/87', 2);
+INSERT INTO `category` (`category_id`, `category_name`, `parent_id`, `path`, `level`) VALUES (88, 'Đồ cho cả hai', 6, '6/88', 2);
 
-CREATE TABLE ResetPassword (
-                               id INT PRIMARY KEY AUTO_INCREMENT,
-                               userId INT UNIQUE NOT NULL,
-                               token VARCHAR ( 255 ) NOT NULL
-);
-
-INSERT INTO `user` (`userId`, `firstName`, `lastName`, `gender`, `address`, `dateOfBirth`, `phoneNumber`, `accountBalance`, `email`, `userName`, `password`, `avatar`, `role`, `isActive`) VALUES (1, 'Ngô Bá', 'Khá', 'MALE', '32248', '1993-11-27', '0369425986', 0x30, 'khabanhdzai@gmail.com', 'khabanhpaylak', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://cand.com.vn/Files/Image/thuthuy/2019/10/31/ea654603-db33-4b11-8b28-bb7e101769d3.jpg', 'USER', b'1');
-INSERT INTO `user` (`userId`, `firstName`, `lastName`, `gender`, `address`, `dateOfBirth`, `phoneNumber`, `accountBalance`, `email`, `userName`, `password`, `avatar`, `role`, `isActive`) VALUES (2, 'Nguyễn Xuân', 'Đường ', 'MALE','32248', '1971-06-15', '0658351258', 0x30, 'duongnhue71@gmail.com', 'duongnhuetb', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://vcdn1-vnexpress.vnecdn.net/2020/04/22/nhue-4267-1587552327.jpg?w=0&h=0&q=100&dpr=2&fit=crop&s=xpvfGXG3x-RA2BVERrzSMQ', 'USER', b'1');
-INSERT INTO `user` (`userId`, `firstName`, `lastName`, `gender`, `address`, `dateOfBirth`, `phoneNumber`, `accountBalance`, `email`, `userName`, `password`, `avatar`, `role`, `isActive`) VALUES (3, 'Lê Văn', 'Phú', 'MALE', '32248', '1980-08-13', '0258635415', 0x30, 'chicaphule@gmail.com', 'chicaphu', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'http://giadinh.mediacdn.vn/2020/8/6/pl-1596717424463705867369.jpg', 'USER', b'1');
-INSERT INTO `user` (`userId`, `firstName`, `lastName`, `gender`, `address`, `dateOfBirth`, `phoneNumber`, `accountBalance`, `email`, `userName`, `password`, `avatar`, `role`, `isActive`) VALUES (4, 'Nguyễn Văn', 'Dũng', 'MALE','32248', '1992-06-15', '0369425586', 0x30, 'dungkhongtrochd@gmail.com', 'dungtrochadong', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://nld.mediacdn.vn/thumb_w/600/291774122806476800/2021/5/22/base64-16216399515381693726686.png', 'USER', b'1');
-INSERT INTO `user` (`userId`, `firstName`, `lastName`, `gender`, `address`, `dateOfBirth`, `phoneNumber`, `accountBalance`, `email`, `userName`, `password`, `avatar`, `role`, `isActive`) VALUES (5, 'Nguyễn Thành', 'Long', 'MALE', '32248', '1988-08-10', '0369845686', 0x30, 'tienbibip@gmail.com', 'tienkhongbip', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://35express.org/wp-content/uploads/2021/01/Kenh-youtube-cua-tien-bip-35express.jpg', 'USER', b'1');
-INSERT INTO `user` (`userId`, `firstName`, `lastName`, `gender`, `address`, `dateOfBirth`, `phoneNumber`, `accountBalance`, `email`, `userName`, `password`, `avatar`, `role`, `isActive`) VALUES (6, 'Nguyễn Văn', 'Hợi', 'MALE', '32248', '1992-05-30', '0369425986', 0x30, 'khanhsky@gmail.com', 'khanhbautroi', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://wikiceleb.net/wp-content/uploads/2022/08/khanh-sky-02.jpg', 'USER', b'1');
-INSERT INTO `user` (`userId`, `firstName`, `lastName`, `gender`, `address`, `dateOfBirth`, `phoneNumber`, `accountBalance`, `email`, `userName`, `password`, `avatar`, `role`, `isActive`) VALUES (7, 'Nguyễn Thùy', 'Chi', 'FEMALE', '32248', '1993-06-14', '0699856478', 0x30, 'chipunek@gmail.com', 'chipuooo', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Chi_Pu_as_H%E1%BA%A1_Linh_in_She_Was_Pretty_%28M%E1%BB%91i_t%C3%ACnh_%C4%91%E1%BA%A7u_c%E1%BB%A7a_t%C3%B4i%29.jpg', 'USER', b'1');
-INSERT INTO `user` (`userId`, `firstName`, `lastName`, `gender`, `address`, `dateOfBirth`, `phoneNumber`, `accountBalance`, `email`, `userName`, `password`, `avatar`, `role`, `isActive`) VALUES (8, 'Mai Phương', 'Thúy', 'FEMALE', '32248', '1995-08-30', '0586264586', 0x30, 'maithuy@gmail.com', 'maithuy12', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1Uli8Zljk9z3TmHP5q8w1k_q7ArIlDupqaw&usqp=CAU', 'USER', b'1');
-INSERT INTO `user` (`userId`, `firstName`, `lastName`, `gender`, `address`, `dateOfBirth`, `phoneNumber`, `accountBalance`, `email`, `userName`, `password`, `avatar`, `role`, `isActive`) VALUES (9, 'Phạm Văn', 'Thoại', 'UNKNOWN', '32248', '1996-06-16', '0685136586', 0x30, 'thoainorin123@gmail.com', 'meophonorin', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://static2.yan.vn/YanNews/2167221/202201/pham-thoai-lien-tuc-gap-rac-roi-khi-ban-hang-bi-mat-tien-oan-c0ce5759.jpg', 'USER', b'1');
-INSERT INTO `user` (`userId`, `firstName`, `lastName`, `gender`, `address`, `dateOfBirth`, `phoneNumber`, `accountBalance`, `email`, `userName`, `password`, `avatar`, `role`, `isActive`) VALUES (10, 'Trần Đức', 'Bo', 'UNKNOWN', '32248', '1999-10-13', '0968596358', 0x30, 'conmeongungok@gmail.com', 'conmeongungok', '$2a$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://mayruaxemay.vn/wp-content/uploads/2021/03/tran-duc-bo-la-ai-1.jpg', 'USER', b'1');
-INSERT INTO `user` (`userId`, `firstName`, `lastName`, `gender`, `address`, `dateOfBirth`, `phoneNumber`, `accountBalance`, `email`, `userName`, `password`, `avatar`, `role`, `isActive`) VALUES (11, 'Bùi Xuân', 'Huấn', 'MALE', '32248', '1984-09-03', '0996684633', 0x30, 'huanhoahong@gmail.com', 'huan9ngon', '$12$lgBMNGHbBxW5MIlg/nyXzOmSDJo5sxsWNBFbZCiYJc1HU1hHH2CcW', 'https://s.memehay.com/files/posts/20210515/toan-bo-loi-ran-day-cua-huan-hoa-hong-huan-rose.jpg', 'USER', b'1');
 
