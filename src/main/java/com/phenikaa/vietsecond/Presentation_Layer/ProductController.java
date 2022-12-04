@@ -2,6 +2,7 @@ package com.phenikaa.vietsecond.Presentation_Layer;
 
 import com.phenikaa.vietsecond.Business_Logic_Layer.ProductService;
 import com.phenikaa.vietsecond.Data_Access_Layer.ProductRepository;
+import com.phenikaa.vietsecond.Form.Filter.PostFilterForm;
 import com.phenikaa.vietsecond.Form.Filter.ProductFilterform;
 import com.phenikaa.vietsecond.Form.ProductForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,17 @@ public class ProductController {
         String username = authentication.getName();
         productService.createNewProduct(form,files,username);
         return new ResponseEntity<String>("Create success",HttpStatus.OK);
+    }
+
+    @GetMapping()
+    public ResponseEntity<?> getAllProduct(Authentication authentication, Pageable pageable, @RequestParam(required = false) String search, ProductFilterform productFilter, PostFilterForm postFilter){
+        String username = "";
+        if(authentication!=null){
+            username = authentication.getName();
+        }
+
+
+            return new ResponseEntity<>(productService.getAllProductPost(pageable,search,productFilter,postFilter,username),HttpStatus.OK);
     }
 
 }

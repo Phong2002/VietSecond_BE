@@ -48,7 +48,6 @@ public class PostProduct {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "posting_time", nullable = false)
     private Date postingTime;
-
     public PostProduct() {
     }
 

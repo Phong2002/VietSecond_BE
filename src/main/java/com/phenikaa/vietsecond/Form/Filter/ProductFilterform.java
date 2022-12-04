@@ -6,4 +6,5 @@ import lombok.Data;
 public class ProductFilterform {
     private String usageStatus;
     private String state;
+    private Integer categoryId;
 }
